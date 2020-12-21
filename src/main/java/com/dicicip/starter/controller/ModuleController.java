@@ -5,21 +5,16 @@ import com.dicicip.starter.repository.ModuleRepository;
 import com.dicicip.starter.util.APIResponse;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/modules")
 public class ModuleController {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private ModuleRepository repository;
@@ -32,21 +27,41 @@ public class ModuleController {
         return new APIResponse<>(repository.findAll());
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}/detail")
+    public APIResponse<?> getOne(
+            @PathVariable("id") Long id,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        Optional<Module> module = this.repository.findById(id);
+
+        if (module.isPresent()) {
+            return new APIResponse<>(module.get());
+        } else {
+            response.setStatus(400);
+            return new APIResponse<>(
+                    null,
+                    false,
+                    "Failed get data"
+            );
+        }
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "/store")
     public APIResponse<?> store(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody Module module
+            @RequestBody Module requestBody
     ) {
 
         Validator<Module> validator = new Validator<>(
-                module,
+                requestBody,
                 new ValidatorItem("name", "required"),
-                new ValidatorItem("description", "required")
+                new ValidatorItem("description")
         );
 
         if (validator.valid()) {
-            return new APIResponse<>(repository.save(module));
+            return new APIResponse<>(repository.save(requestBody));
         } else {
             response.setStatus(400);
             return new APIResponse<>(
@@ -56,6 +71,74 @@ public class ModuleController {
             );
         }
 
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/{id}/update")
+    public APIResponse<?> update(
+            @PathVariable("id") Long id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody Module requestBody
+    ) {
+
+        Validator<Module> validator = new Validator<>(
+                requestBody,
+                new ValidatorItem("name", "required"),
+                new ValidatorItem("description")
+        );
+
+        if (validator.valid()) {
+
+            Optional<Module> module = this.repository.findById(id);
+
+            if (module.isPresent()) {
+
+                requestBody.id = module.get().id;
+
+                return new APIResponse<>(this.repository.save(requestBody));
+
+            } else {
+                response.setStatus(400);
+                return new APIResponse<>(
+                        null,
+                        false,
+                        "Failed get data"
+                );
+            }
+
+        } else {
+            response.setStatus(400);
+            return new APIResponse<>(
+                    validator.getErrorsList(),
+                    false,
+                    "Failed save data"
+            );
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}/delete")
+    public APIResponse<?> delete(
+            @PathVariable("id") Long id,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        Optional<Module> module = this.repository.findById(id);
+
+        if (module.isPresent()) {
+
+            this.repository.delete(module.get());
+
+            return new APIResponse<>(null);
+
+        } else {
+            response.setStatus(400);
+            return new APIResponse<>(
+                    null,
+                    false,
+                    "Failed delete data"
+            );
+        }
     }
 
 }

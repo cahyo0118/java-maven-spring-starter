@@ -60,6 +60,12 @@
 <!--            <artifactId>spring-security-test</artifactId>-->
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,13 +75,13 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <configuration>
-                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.liquibase</groupId>-->
+<!--                <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
         </plugins>
     </build>
