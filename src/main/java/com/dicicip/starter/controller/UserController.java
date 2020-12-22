@@ -66,7 +66,6 @@ public class UserController {
                 requestBody,
                 new ValidatorItem("name", "required"),
                 new ValidatorItem("email", "required"),
-                new ValidatorItem("photo", "required"),
                 new ValidatorItem("password", "required")
         );
 
@@ -97,8 +96,7 @@ public class UserController {
         Validator<User> validator = new Validator<>(
                 requestBody,
                 new ValidatorItem("name", "required"),
-                new ValidatorItem("email", "required"),
-                new ValidatorItem("password", "required")
+                new ValidatorItem("email", "required")
         );
 
         if (validator.valid()) {
@@ -108,6 +106,14 @@ public class UserController {
             if (user.isPresent()) {
 
                 requestBody.id = user.get().id;
+
+                if (requestBody.password == null) {
+                    requestBody.password = user.get().password;
+                } else {
+                    requestBody.password = this.passwordEncoder.encode(requestBody.password);
+                }
+
+                requestBody.photo = this.fileUtil.storeBase64ToTemp(requestBody.photo).path;
 
                 return new APIResponse<>(this.repository.save(requestBody));
 
