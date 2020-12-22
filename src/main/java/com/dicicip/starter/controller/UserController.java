@@ -3,6 +3,7 @@ package com.dicicip.starter.controller;
 import com.dicicip.starter.model.User;
 import com.dicicip.starter.repository.UserRepository;
 import com.dicicip.starter.util.APIResponse;
+import com.dicicip.starter.util.file.FileUtil;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    FileUtil fileUtil;
 
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse<?> getAll(
@@ -62,11 +66,14 @@ public class UserController {
                 requestBody,
                 new ValidatorItem("name", "required"),
                 new ValidatorItem("email", "required"),
+                new ValidatorItem("photo", "required"),
                 new ValidatorItem("password", "required")
         );
 
         if (validator.valid()) {
             requestBody.password = this.passwordEncoder.encode(requestBody.password);
+            requestBody.photo = this.fileUtil.storeBase64ToTemp(requestBody.photo).path;
+
             return new APIResponse<>(repository.save(requestBody));
         } else {
             response.setStatus(400);
