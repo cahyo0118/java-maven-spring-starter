@@ -3,6 +3,8 @@ package com.dicicip.starter.controller;
 import com.dicicip.starter.model.Role;
 import com.dicicip.starter.repository.RoleRepository;
 import com.dicicip.starter.util.APIResponse;
+import com.dicicip.starter.util.query.DB;
+import com.dicicip.starter.util.query.QueryHelpers;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,15 @@ public class RoleController {
     @Autowired
     private RoleRepository repository;
 
+    @Autowired
+    DB db;
+
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse<?> getAll(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return new APIResponse<>(repository.findAll());
+        return new APIResponse<>(QueryHelpers.getData(request.getParameterMap(), "roles", db));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}/detail")

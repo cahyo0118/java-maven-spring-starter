@@ -3,6 +3,8 @@ package com.dicicip.starter.controller;
 import com.dicicip.starter.model.Module;
 import com.dicicip.starter.repository.ModuleRepository;
 import com.dicicip.starter.util.APIResponse;
+import com.dicicip.starter.util.query.DB;
+import com.dicicip.starter.util.query.QueryHelpers;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,15 @@ public class ModuleController {
     @Autowired
     private ModuleRepository repository;
 
+    @Autowired
+    DB db;
+
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse<?> getAll(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return new APIResponse<>(repository.findAll());
+        return new APIResponse<>(QueryHelpers.getData(request.getParameterMap(), "modules", db));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}/detail")

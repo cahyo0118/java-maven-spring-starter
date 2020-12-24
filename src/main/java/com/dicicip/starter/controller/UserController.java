@@ -41,16 +41,7 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-
-//        QueryHelpers.getData(request.getParameterMap(), User.class);
-
-        try {
-            System.out.println("REQUEST ==> " + objectMapper.writeValueAsString(QueryHelpers.getData(request.getParameterMap(), User.class, db)));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return new APIResponse<>(repository.findAll());
+        return new APIResponse<>(QueryHelpers.getData(request.getParameterMap(), "users", db));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}/detail")
