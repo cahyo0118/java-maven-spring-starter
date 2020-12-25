@@ -7,9 +7,8 @@ import com.dicicip.starter.util.query.DB;
 import com.dicicip.starter.util.query.QueryHelpers;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/roles")
+@PreAuthorize("isFullyAuthenticated()")
 public class RoleController {
 
     @Autowired
@@ -70,22 +70,7 @@ public class RoleController {
         );
 
         if (validator.valid()) {
-
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            try {
-
-                System.out.println("SAVE ROLE ==> " + objectMapper.writeValueAsString(repository.save(requestBody)));
-
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-
-//            repository.
-
-//            throw new Exception();
-            return new APIResponse<>(null);
-//            return new APIResponse<>(repository.save(requestBody));
+            return new APIResponse<>(repository.save(requestBody));
         } else {
             response.setStatus(400);
             return new APIResponse<>(

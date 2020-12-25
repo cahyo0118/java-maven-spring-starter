@@ -1,15 +1,16 @@
 package com.dicicip.starter.repository;
 
 import com.dicicip.starter.model.User;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
-//    @Query("SELECT u FROM User u where")
-//    Iterable<User> findAll(Pageable pageable);
+    Optional<User> findFirstByEmail(String email);
+
 }
