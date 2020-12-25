@@ -7,7 +7,10 @@ import com.dicicip.starter.util.query.DB;
 import com.dicicip.starter.util.query.QueryHelpers;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,11 +56,12 @@ public class RoleController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/store")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> store(
             HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody Role requestBody
-    ) {
+    ) throws Exception {
 
         Validator<Role> validator = new Validator<>(
                 requestBody,
@@ -66,7 +70,22 @@ public class RoleController {
         );
 
         if (validator.valid()) {
-            return new APIResponse<>(repository.save(requestBody));
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            try {
+
+                System.out.println("SAVE ROLE ==> " + objectMapper.writeValueAsString(repository.save(requestBody)));
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+//            repository.
+
+//            throw new Exception();
+            return new APIResponse<>(null);
+//            return new APIResponse<>(repository.save(requestBody));
         } else {
             response.setStatus(400);
             return new APIResponse<>(
@@ -79,6 +98,7 @@ public class RoleController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}/update")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> update(
             @PathVariable("id") Long id,
             HttpServletRequest request,
@@ -90,6 +110,75 @@ public class RoleController {
                 requestBody,
                 new ValidatorItem("name", "required"),
                 new ValidatorItem("description")
+        );
+
+        if (validator.valid()) {
+
+            Optional<Role> role = this.repository.findById(id);
+
+            if (role.isPresent()) {
+
+                requestBody.id = role.get().id;
+
+                return new APIResponse<>(this.repository.save(requestBody));
+
+            } else {
+                response.setStatus(400);
+                return new APIResponse<>(
+                        null,
+                        false,
+                        "Failed update data, data not found"
+                );
+            }
+
+        } else {
+            response.setStatus(400);
+            return new APIResponse<>(
+                    validator.getErrorsList(),
+                    false,
+                    "Failed update data"
+            );
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}/delete")
+    @Transactional(rollbackFor = Exception.class)
+    public APIResponse<?> delete(
+            @PathVariable("id") Long id,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        Optional<Role> role = this.repository.findById(id);
+
+        if (role.isPresent()) {
+
+            this.repository.delete(role.get());
+
+            return new APIResponse<>(null);
+
+        } else {
+            response.setStatus(400);
+            return new APIResponse<>(
+                    null,
+                    false,
+                    "Failed delete data"
+            );
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/{id}/update-permissions")
+    @Transactional(rollbackFor = Exception.class)
+    public APIResponse<?> updatePermissions(
+            @PathVariable("id") Long id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody Role requestBody
+    ) {
+
+        Validator<Role> validator = new Validator<>(
+                requestBody,
+                new ValidatorItem("is_permit_all", "required")
         );
 
         if (validator.valid()) {
@@ -120,30 +209,6 @@ public class RoleController {
             );
         }
 
-    }
-
-    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}/delete")
-    public APIResponse<?> delete(
-            @PathVariable("id") Long id,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        Optional<Role> role = this.repository.findById(id);
-
-        if (role.isPresent()) {
-
-            this.repository.delete(role.get());
-
-            return new APIResponse<>(null);
-
-        } else {
-            response.setStatus(400);
-            return new APIResponse<>(
-                    null,
-                    false,
-                    "Failed delete data"
-            );
-        }
     }
 
 }

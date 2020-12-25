@@ -8,6 +8,7 @@ import com.dicicip.starter.util.query.QueryHelpers;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +54,7 @@ public class PermissionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/store")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> store(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -79,6 +81,7 @@ public class PermissionController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}/update")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> update(
             @PathVariable("id") Long id,
             HttpServletRequest request,
@@ -123,6 +126,7 @@ public class PermissionController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}/delete")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> delete(
             @PathVariable("id") Long id,
             HttpServletRequest request,

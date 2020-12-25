@@ -56,6 +56,7 @@ public class DB {
     }
 
     public void insert(String table, Map<String, Object> field) {
+
         int set = field.size();
         int i = 0;
         String sql = "INSERT INTO " + table;

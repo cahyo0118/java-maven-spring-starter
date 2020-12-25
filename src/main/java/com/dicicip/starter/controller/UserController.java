@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +66,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/store")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> store(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -95,6 +97,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}/update")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> update(
             @PathVariable("id") Long id,
             HttpServletRequest request,
@@ -147,6 +150,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}/delete")
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse<?> delete(
             @PathVariable("id") Long id,
             HttpServletRequest request,
