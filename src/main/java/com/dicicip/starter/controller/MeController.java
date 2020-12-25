@@ -1,11 +1,14 @@
 package com.dicicip.starter.controller;
 
+import com.dicicip.starter.config.security.annotation.CurrentUser;
+import com.dicicip.starter.config.security.model.UserPrincipal;
 import com.dicicip.starter.model.User;
 import com.dicicip.starter.repository.UserRepository;
 import com.dicicip.starter.util.APIResponse;
 import com.dicicip.starter.util.file.FileUtil;
 import com.dicicip.starter.util.validator.Validator;
 import com.dicicip.starter.util.validator.ValidatorItem;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +30,16 @@ public class MeController {
     @Autowired
     FileUtil fileUtil;
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}/detail")
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    @RequestMapping(method = RequestMethod.GET)
     public APIResponse<?> getOne(
-            @PathVariable("id") Long id,
+            @CurrentUser UserPrincipal currentUser,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        Optional<User> user = this.repository.findById(id);
+
+        Optional<User> user = this.repository.findById(currentUser.getId());
 
         if (user.isPresent()) {
             return new APIResponse<>(user.get());

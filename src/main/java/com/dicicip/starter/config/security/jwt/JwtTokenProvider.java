@@ -1,5 +1,6 @@
 package com.dicicip.starter.config.security.jwt;
 
+import com.dicicip.starter.config.security.model.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,13 @@ public class JwtTokenProvider {
 
 	public String generateToken(Authentication authentication) {
 
-//		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
 		return Jwts.builder()
-//			.setSubject(Long.toString(userPrincipal.getId()))
+			.setSubject(Long.toString(userPrincipal.getId()))
 			.setIssuedAt(new Date())
 			.setExpiration(expiryDate)
 			.signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -37,14 +38,6 @@ public class JwtTokenProvider {
 	}
 
     public String generateTokenByUserId(Map user) {
-
-//        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-//        UserPrincipal userPrincipal = new UserPrincipal(
-//            Integer.parseInt(user.get("id").toString()),
-//            Integer.parseInt(user.get("id").toString()),
-//            Integer.parseInt(user.get("id").toString()),
-//            Integer.parseInt(user.get("id").toString())
-//        );
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);

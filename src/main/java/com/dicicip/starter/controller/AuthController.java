@@ -70,8 +70,8 @@ public class AuthController {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//                String jwt = tokenProvider.generateToken(authentication);
-                String jwt = tokenProvider.generateTokenByUserId(objectMapper.convertValue(user.get(), HashMap.class));
+                String jwt = tokenProvider.generateToken(authentication);
+//                String jwt = tokenProvider.generateTokenByUserId(objectMapper.convertValue(user.get(), HashMap.class));
 
                 return new APIResponse<>(jwt);
 
