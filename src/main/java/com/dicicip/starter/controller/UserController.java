@@ -41,6 +41,7 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
+        System.out.println("TAYO ==> " + this.passwordEncoder.encode("123456"));
         return new APIResponse<>(QueryHelpers.getData(request.getParameterMap(), "users", db));
     }
 

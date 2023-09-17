@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="cahyo0118" id="5">
+        <sql endDelimiter=";"> 
+            -- pass: 123456
+            insert into users (id, name, email, password) values (1, 'Administrator', 'admin@mail.com', '$2a$10$CaFkXxKfVEs12C0w0Sy8zuZxQFDWR3Vi4a2v/hLVSLp7CAGTmQAtm');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
