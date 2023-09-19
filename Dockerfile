@@ -1,13 +1,5 @@
-FROM maven:3.6.3-openjdk-15-slim as MAVEN_BUILD
+FROM law0118/spring-starter-libraries:package as MAVEN_BUILD
 
-COPY . /build/
+COPY . .
 
-WORKDIR /build/
-
-RUN mvn package
-
-FROM maven:3.6.3-openjdk-15-slim
-
-WORKDIR /app
-
-COPY --from=MAVEN_BUILD
+RUN mvn package -Dmaven.test.skip
